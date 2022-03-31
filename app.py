@@ -3,11 +3,10 @@ import os
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
-db_password = os.environ.get["DB_PASSWORD"]
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:{db_password}@localhost/height_collector'
+db_password = os.environ.get("DB_PASSWORD")
+app.config['SQLALCHEMY_DATABASE_URI'] = db_password
 db = SQLAlchemy(app)
 
 
@@ -34,6 +33,9 @@ def success():
         email = request.form["email_name"]
         height = request.form["height_name"]
         print(email, height)
+        data = Data(email, height)
+        db.session.add(data)
+        db.session.commit()
         return render_template("success.html")
  
 
